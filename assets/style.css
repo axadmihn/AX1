@@ -389,7 +389,6 @@ main.spotlight::before{inset:-220px -180px;opacity:0.5}
     top:calc(var(--header-height, 92px) + 12px + env(safe-area-inset-top, 0px));
     left:calc(env(safe-area-inset-left, 0px) + 20px);
     right:calc(env(safe-area-inset-right, 0px) + 20px);
-    z-index:120;
     border-radius:24px;
     padding:24px;
     background:rgba(5,10,23,0.96);
