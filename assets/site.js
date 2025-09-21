@@ -61,12 +61,22 @@
   const nav = document.getElementById('site-nav');
   const toggle = document.querySelector('[data-nav-toggle]');
   if(!nav || !toggle) return;
+  const root = document.documentElement;
+  const applyScrollLock = ()=>{
+    const scrollBarWidth = Math.max(0, window.innerWidth - root.clientWidth);
+    document.body.style.setProperty('--scrollbar-compensation', scrollBarWidth ? scrollBarWidth + 'px' : '0px');
+  };
+  const releaseScrollLock = ()=>{
+    document.body.style.removeProperty('--scrollbar-compensation');
+  };
   const close = ()=>{
     nav.classList.remove('is-open');
     document.body.classList.remove('nav-open');
     toggle.setAttribute('aria-expanded', 'false');
+    releaseScrollLock();
   };
   const open = ()=>{
+    applyScrollLock();
     nav.classList.add('is-open');
     document.body.classList.add('nav-open');
     toggle.setAttribute('aria-expanded', 'true');
@@ -81,6 +91,8 @@
   window.addEventListener('resize', ()=>{
     if(window.innerWidth > 900){
       close();
+    } else if(nav.classList.contains('is-open')){
+      applyScrollLock();
     }
   }, {passive:true});
   document.addEventListener('keydown', (event)=>{
