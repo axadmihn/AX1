@@ -26,15 +26,34 @@
 (function(){
   const header = document.querySelector('.header');
   if(!header) return;
+  const root = document.documentElement;
+  const setHeight = ()=>{
+    const rect = header.getBoundingClientRect();
+    root.style.setProperty('--header-height', Math.round(rect.height) + 'px');
+  };
+  setHeight();
+  if('ResizeObserver' in window){
+    const observer = new ResizeObserver(setHeight);
+    observer.observe(header);
+  } else {
+    window.addEventListener('resize', setHeight, {passive:true});
+  }
   let last = window.scrollY || 0;
-  window.addEventListener('scroll', ()=>{
+  let condensed = header.classList.contains('is-condensed');
+  const onScroll = ()=>{
     const current = window.scrollY || 0;
-    if(current > 40) header.classList.add('is-condensed');
-    else header.classList.remove('is-condensed');
+    const shouldCondense = current > 40;
+    header.classList.toggle('is-condensed', shouldCondense);
+    if(shouldCondense !== condensed){
+      condensed = shouldCondense;
+      setHeight();
+    }
     const hidden = current > last && current > 120;
     header.classList.toggle('is-hidden', hidden);
     last = current;
-  }, {passive:true});
+  };
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
 })();
 
 // Navigation toggle (mobile)
@@ -42,12 +61,22 @@
   const nav = document.getElementById('site-nav');
   const toggle = document.querySelector('[data-nav-toggle]');
   if(!nav || !toggle) return;
+  const root = document.documentElement;
+  const applyScrollLock = ()=>{
+    const scrollBarWidth = Math.max(0, window.innerWidth - root.clientWidth);
+    document.body.style.setProperty('--scrollbar-compensation', scrollBarWidth ? scrollBarWidth + 'px' : '0px');
+  };
+  const releaseScrollLock = ()=>{
+    document.body.style.removeProperty('--scrollbar-compensation');
+  };
   const close = ()=>{
     nav.classList.remove('is-open');
     document.body.classList.remove('nav-open');
     toggle.setAttribute('aria-expanded', 'false');
+    releaseScrollLock();
   };
   const open = ()=>{
+    applyScrollLock();
     nav.classList.add('is-open');
     document.body.classList.add('nav-open');
     toggle.setAttribute('aria-expanded', 'true');
@@ -62,6 +91,8 @@
   window.addEventListener('resize', ()=>{
     if(window.innerWidth > 900){
       close();
+    } else if(nav.classList.contains('is-open')){
+      applyScrollLock();
     }
   }, {passive:true});
   document.addEventListener('keydown', (event)=>{
