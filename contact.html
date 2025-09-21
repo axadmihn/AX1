@@ -61,23 +61,24 @@
           </div>
           <div class="panel">
             <h3>Send a message</h3>
-            <form id="contactForm">
+            <form id="contactForm" data-endpoint="/api/contact">
               <div class="form-row">
                 <div>
                   <label for="yourName">Your name</label>
-                  <input class="input" type="text" id="yourName" placeholder="Name or organization" required>
+                  <input class="input" type="text" id="yourName" name="name" placeholder="Name or organization" autocomplete="name" required>
                 </div>
                 <div>
                   <label for="yourEmail">Email</label>
-                  <input class="input" type="email" id="yourEmail" placeholder="you@example.com" required>
+                  <input class="input" type="email" id="yourEmail" name="email" placeholder="you@example.com" autocomplete="email" required>
                 </div>
               </div>
               <label for="yourMessage" class="mt-16">Message</label>
-              <textarea id="yourMessage" rows="6" placeholder="Tell us about your protocol needs"></textarea>
+              <textarea id="yourMessage" name="message" rows="6" placeholder="Tell us about your protocol needs" minlength="10" required></textarea>
               <div class="hero-cta mt-24">
-                <button class="btn primary" type="submit">Open email draft</button>
-                <a class="btn ghost" href="mailto:axadmihn@axnmihn.com">Send directly</a>
+                <button class="btn primary" type="submit">Send message</button>
+                <a class="btn ghost" href="mailto:axadmihn@axnmihn.com" data-direct-email>Send directly</a>
               </div>
+              <div class="form-status" id="contactStatus" role="status" aria-live="polite" aria-atomic="true"></div>
             </form>
           </div>
         </div>
